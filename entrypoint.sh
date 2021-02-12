@@ -63,20 +63,7 @@ build_image() {
   set +x
 }
 
-push_git_tag() {
-  [[ "$GITHUB_REF" =~ /tags/ ]] || return 0
-  local git_tag=${GITHUB_REF##*/tags/}
-  local image_with_git_tag
-  image_with_git_tag="$(_get_full_image_name)":$git_tag
-  docker tag "$(_get_full_image_name)":${INPUT_IMAGE_TAG} "$image_with_git_tag"
-  docker push "$image_with_git_tag"
-}
-
-push_image_and_stages() {
-  # push image
-  docker push "$(_get_full_image_name)":${INPUT_IMAGE_TAG}
-  push_git_tag
-
+push_stages() {
   # push each building stage
   stage_number=1
   for stage in $(_get_stages); do
@@ -100,9 +87,5 @@ check_required_input
 login_to_registry
 pull_cached_stages
 build_image
-
-if [ "$INPUT_PUSH_IMAGE_AND_STAGES" = true ]; then
-  push_image_and_stages
-fi
-
+push_stages
 logout_from_registry
