@@ -57,7 +57,7 @@ build_image() {
   set -x
   docker-compose \
     -f ${INPUT_CONTEXT}/${INPUT_DOCKERFILE} \
-    build test $cache_from | tee "$BUILD_LOG"
+    build test | tee "$BUILD_LOG"
   docker tag deployment_test "$(_get_full_image_name)":${INPUT_IMAGE_TAG}
   set +x
 }
