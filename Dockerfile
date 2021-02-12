@@ -1,7 +1,7 @@
 FROM docker:19.03.2
 
-LABEL "maintainer"="whoan <juaneabadie@gmail.com>"
-LABEL "repository"="https://github.com/whoan/docker-build-with-cache-action"
+RUN curl -L "https://github.com/docker/compose/releases/download/1.28.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+RUN chmod +x /usr/local/bin/docker-compose
 
 COPY entrypoint.sh /entrypoint.sh
 
