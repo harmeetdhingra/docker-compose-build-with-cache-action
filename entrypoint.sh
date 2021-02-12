@@ -56,7 +56,7 @@ build_image() {
   # build image using cache
   set -x
   docker-compose \
-    -f ./deployment/docker-compose.base.yml \
+    -f ${INPUT_CONTEXT}/${INPUT_DOCKERFILE}
     build test \
     $cache_from \
     --tag "$(_get_full_image_name)":${INPUT_IMAGE_TAG} | tee "$BUILD_LOG"
