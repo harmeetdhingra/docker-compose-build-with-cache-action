@@ -1,7 +1,4 @@
-FROM docker:19.03.2
-
-RUN which docker-compose
-RUN chmod +x /usr/local/bin/docker-compose
+FROM tiangolo/docker-with-compose
 
 COPY entrypoint.sh /entrypoint.sh
 
