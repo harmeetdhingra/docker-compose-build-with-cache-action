@@ -82,9 +82,9 @@ logout_from_registry() {
   docker logout "${INPUT_REGISTRY}"
 }
 
-check_required_input
-login_to_registry
-pull_cached_stages
+# check_required_input
+# login_to_registry
+# pull_cached_stages
 build_image
-push_stages
-logout_from_registry
+# push_stages
+# logout_from_registry
