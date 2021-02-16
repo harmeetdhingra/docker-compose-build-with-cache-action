@@ -16,6 +16,10 @@ _get_full_image_name() {
   echo ${INPUT_REGISTRY:+$INPUT_REGISTRY/}${INPUT_IMAGE_NAME}
 }
 
+_get_branch_name() {
+  echo "${INPUT_IMAGE_TAG}" | sed 's/\//\-/g'
+}
+
 # action steps
 check_required_input() {
   _exit_if_empty USERNAME "${INPUT_USERNAME}"
@@ -31,6 +35,7 @@ login_to_registry() {
 
 pull_cached_stages() {
   docker pull "$(_get_full_image_name)":cached 2> /dev/null || true
+  docker pull "$(_get_full_image_name)":"$(_get_branch_name)"-cached 2> /dev/null || true
 }
 
 build_image() {
@@ -39,14 +44,18 @@ build_image() {
   docker-compose \
     -f ${INPUT_CONTEXT}/${INPUT_DOCKERFILE} \
     build test
-  docker tag deployment_test "$(_get_full_image_name)":${INPUT_IMAGE_TAG}
   set +x
 }
 
 push_stages() {
-  # push the image itself as a stage (the last one)
-  stage_image=$(_get_full_image_name):cached
-  docker tag "$(_get_full_image_name)":${INPUT_IMAGE_TAG} $stage_image
+  # replace / in branch name with -
+  # and then cache that image for future pushes to the same branch
+  default_cache=$(_get_full_image_name):cached
+  docker tag deployment_test $default_cache
+  docker push $default_cache
+
+  stage_image=$(_get_full_image_name):$(_get_branch_name)-cached
+  docker tag deployment_test $stage_image
   docker push $stage_image
 }
 
